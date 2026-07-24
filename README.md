@@ -6,6 +6,7 @@ exFAT filesystem formatting in Rust.
 ## Features
 - exFAT formatting
 - `no-std` support
+- WebAssembly support (`wasm32-unknown-unknown`, `wasm32-wasip1`, and `wasm32-wasip2`)
 - reading
 
 ## Usage

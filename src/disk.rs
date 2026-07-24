@@ -86,7 +86,7 @@ pub trait ReadOffset {
     fn read_exact(&self, mut offset: u64, mut buffer: &mut [u8]) -> Result<(), Self::Err> {
         while !buffer.is_empty() {
             match self.read_at(offset, buffer) {
-                Ok(0) => break,
+                Ok(0) => return Err(PartitionError::unexpected_eop()),
                 Ok(n) => {
                     buffer = &mut buffer[n..];
                     offset = offset
@@ -140,5 +140,12 @@ impl ReadOffset for std::fs::File {
     #[cfg(windows)]
     fn read_at(&self, offset: u64, buf: &mut [u8]) -> Result<usize, Self::Err> {
         std::os::windows::fs::FileExt::seek_read(self, buf, offset)
+    }
+
+    #[cfg(not(any(unix, windows)))]
+    fn read_at(&self, offset: u64, buf: &mut [u8]) -> Result<usize, Self::Err> {
+        let mut file = self.try_clone()?;
+        std::io::Seek::seek(&mut file, std::io::SeekFrom::Start(offset))?;
+        std::io::Read::read(&mut file, buf)
     }
 }

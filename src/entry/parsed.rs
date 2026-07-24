@@ -1,3 +1,5 @@
+use alloc::{string::String, vec::Vec};
+
 use crate::{
     boot_sector::BootSector,
     disk::ReadOffset,

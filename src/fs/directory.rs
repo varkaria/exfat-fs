@@ -7,8 +7,7 @@ use crate::{
     fat::Fat,
     timestamp::Timestamps,
 };
-use alloc::string::String;
-use alloc::sync::Arc;
+use alloc::{string::String, sync::Arc, vec::Vec};
 
 use super::{FsElement, file::File};
 

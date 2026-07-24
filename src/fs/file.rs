@@ -1,4 +1,4 @@
-use alloc::sync::Arc;
+use alloc::{string::String, sync::Arc};
 
 use crate::{
     boot_sector::BootSector,

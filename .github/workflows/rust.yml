@@ -8,6 +8,29 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  wasm:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install toolchain
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: wasm32-unknown-unknown, wasm32-wasip1, wasm32-wasip2
+
+    - name: Check browser WebAssembly
+      run: cargo check --target wasm32-unknown-unknown
+
+    - name: Check no-std WebAssembly
+      run: cargo check --lib --target wasm32-unknown-unknown --no-default-features
+
+    - name: Check WASI Preview 1
+      run: cargo check --target wasm32-wasip1
+
+    - name: Check WASI Preview 2
+      run: cargo check --target wasm32-wasip2
+
   lint_and_test:
     strategy: 
       matrix:

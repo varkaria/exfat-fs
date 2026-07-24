@@ -297,7 +297,7 @@ impl StreamExtensionEntry {
 
 impl ClusterAllocation for StreamExtensionEntry {
     fn valid(&self) -> bool {
-        !(self.first_cluster == 0 && self.data_len != 0 || self.first_cluster < 2)
+        ((self.first_cluster == 0 && self.data_len == 0) || self.first_cluster >= 2)
             && self.general_secondary_flags.allocation_possible()
             && self.name_length > 0
             && self.valid_data_length <= self.data_len
@@ -359,5 +359,36 @@ pub(crate) struct VendorAllocationEntry {
 impl VendorAllocationEntry {
     pub(crate) fn new() -> Self {
         unimplemented!("vendor allocaton entry creation");
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{ClusterAllocation, GeneralSecondaryFlags, StreamExtensionEntry};
+
+    fn stream(first_cluster: u32, data_len: u64) -> StreamExtensionEntry {
+        StreamExtensionEntry {
+            general_secondary_flags: GeneralSecondaryFlags(1),
+            name_length: 1,
+            valid_data_length: data_len,
+            first_cluster,
+            data_len,
+            ..StreamExtensionEntry::default()
+        }
+    }
+
+    #[test]
+    fn empty_stream_without_clusters_is_valid() {
+        assert!(stream(0, 0).valid());
+    }
+
+    #[test]
+    fn non_empty_stream_without_clusters_is_invalid() {
+        assert!(!stream(0, 1).valid());
+    }
+
+    #[test]
+    fn allocated_stream_is_valid() {
+        assert!(stream(2, 1).valid());
     }
 }
